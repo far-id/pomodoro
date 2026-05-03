@@ -9,6 +9,8 @@ import appCss from '../styles.css?url';
 import type { QueryClient } from '@tanstack/react-query';
 import { getSessionFn } from '@/features/auth/serverFn/auth-fn';
 import { Toaster } from '@/components/ui/sonner';
+import NotFound from '@/features/system/pages/NotFound';
+import ServerError from '@/features/system/pages/ServerError';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -44,7 +46,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 	shellComponent: RootDocument,
-	notFoundComponent: () => <div>Not Found</div>,
+	notFoundComponent: NotFound,
+	errorComponent: ServerError,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {

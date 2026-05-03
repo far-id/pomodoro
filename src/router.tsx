@@ -12,12 +12,13 @@ export function getRouter() {
   const context = getContext()
 
   const router = createTanStackRouter({
-    routeTree,
-    context,
-    scrollRestoration: true,
-    defaultPreload: 'intent',
-    defaultPreloadStaleTime: 0,
-  })
+		routeTree,
+		context,
+		scrollRestoration: true,
+		defaultPreload: 'intent',
+		defaultPreloadStaleTime: 0,
+		notFoundMode: 'root',
+	});
 
   setupRouterSsrQueryIntegration({ router, queryClient: context.queryClient })
 

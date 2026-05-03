@@ -13,6 +13,7 @@ export const Route = createFileRoute('/_app')({
 				},
 			});
 		}
+		return { user: context.user };
 	},
 	component: RouteComponent,
 });
