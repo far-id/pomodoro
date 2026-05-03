@@ -1,8 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Link } from '@tanstack/react-router';
-import { LayoutDashboard, TimerIcon } from 'lucide-react';
-import { Settings } from './Settings';
+import {
+	FolderKanban,
+	LayoutDashboard,
+	ListTodo,
+	SlidersHorizontal,
+	TimerIcon,
+} from 'lucide-react';
 import { useSettingDrawerToggleStore } from '../hooks/useSettingDrawerToggleStore';
 
 export const SideNavbar = () => {
@@ -91,7 +96,7 @@ export const SideNavbar = () => {
 						</Link>
 						<Link to={'/projects'} className='group'>
 							<div className='flex flex-col items-center gap-1 group-[.active]:bg-primary/10 p-1 rounded-md'>
-								<LayoutDashboard className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
+								<FolderKanban className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
 								<span className='group-[.active]:text-primary text-sm text-muted-foreground'>
 									Projects
 								</span>
@@ -104,7 +109,7 @@ export const SideNavbar = () => {
 						</div>
 						<Link to={'/tasks'} className='group'>
 							<div className='flex flex-col items-center gap-1 group-[.active]:bg-primary/10 p-1 rounded-md'>
-								<LayoutDashboard className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
+								<ListTodo className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
 								<span className='group-[.active]:text-primary text-sm text-muted-foreground'>
 									Tasks
 								</span>
@@ -112,7 +117,7 @@ export const SideNavbar = () => {
 						</Link>
 						<Link to={'/settings'} className='group'>
 							<div className='flex flex-col items-center gap-1 group-[.active]:bg-primary/10 p-1 rounded-md'>
-								<LayoutDashboard className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
+								<SlidersHorizontal className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
 								<span className='group-[.active]:text-primary text-sm text-muted-foreground'>
 									Settings
 								</span>

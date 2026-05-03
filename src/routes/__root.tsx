@@ -7,12 +7,22 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 import appCss from '../styles.css?url';
 
 import type { QueryClient } from '@tanstack/react-query';
+import { getSessionFn } from '@/features/auth/serverFn/auth-fn';
+import { Toaster } from '@/components/ui/sonner';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	beforeLoad: async () => {
+		const session = await getSessionFn();
+
+		return {
+			user: session?.user ?? null,
+			session: session?.session ?? null,
+		};
+	},
 	head: () => ({
 		meta: [
 			{
@@ -52,6 +62,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   dark:[&::-webkit-scrollbar-track]:bg-neutral-700'
 			>
 				{children}
+				<Toaster />
 				<TanStackDevtools
 					config={{
 						position: 'bottom-right',
