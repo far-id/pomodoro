@@ -8,7 +8,7 @@ import { authClient } from '@/lib/auth-client';
 import z from 'zod';
 
 const formSchema = z.object({
-	email: z.string().email(),
+	email: z.email(),
 });
 
 export function ForgotPasswordForm() {

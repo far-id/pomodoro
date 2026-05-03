@@ -11,7 +11,7 @@ import { authClient } from '@/lib/auth-client';
 import { resolveRedirect } from '@/lib/utils';
 
 const formSchema = z.object({
-	email: z.string().email(),
+	email: z.email(),
 	password: z.string(),
 });
 
