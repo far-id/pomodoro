@@ -1,4 +1,4 @@
-import { getSessionFn } from '@/features/auth/serverFn/auth-fn';
+import { getSessionFn } from '@/features/auth/api/auth.api';
 import { queryOptions } from '@tanstack/react-query';
 
 export const sessionQueryOptions = queryOptions({
