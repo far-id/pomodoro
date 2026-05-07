@@ -115,14 +115,14 @@ export const SideNavbar = () => {
 								</span>
 							</div>
 						</Link>
-						<Link to={'/settings'} className='group'>
+						<button onClick={() => setIsOpen(true)} className='group'>
 							<div className='flex flex-col items-center gap-1 group-[.active]:bg-primary/10 p-1 rounded-md'>
 								<SlidersHorizontal className='w-8 h-8 stroke-2 group-[.active]:stroke-primary stroke-muted-foreground' />
 								<span className='group-[.active]:text-primary text-sm text-muted-foreground'>
 									Settings
 								</span>
 							</div>
-						</Link>
+						</button>
 					</li>
 				</ul>
 			</div>
