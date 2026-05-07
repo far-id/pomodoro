@@ -82,6 +82,7 @@ export const SignUpForm = () => {
 									aria-invalid={isInvalid}
 									placeholder='Farid Rizky Wijaya'
 									autoComplete='off'
+									required
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
@@ -104,6 +105,7 @@ export const SignUpForm = () => {
 									placeholder='example@pomondoro.com'
 									type='email'
 									autoComplete='off'
+									required
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
@@ -125,6 +127,7 @@ export const SignUpForm = () => {
 									aria-invalid={isInvalid}
 									placeholder='********'
 									autoComplete='off'
+									required
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
@@ -146,7 +149,7 @@ export const SignUpForm = () => {
 									aria-invalid={isInvalid}
 									placeholder='********'
 									autoComplete='off'
-								/>
+									required								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);

@@ -81,6 +81,7 @@ export const LoginForm = () => {
 									type='email'
 									placeholder='example@pomondoro.com'
 									autoComplete='off'
+									required
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
@@ -107,6 +108,7 @@ export const LoginForm = () => {
 									aria-invalid={isInvalid}
 									placeholder='********'
 									autoComplete='off'
+									required
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
