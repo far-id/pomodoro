@@ -1,7 +1,7 @@
 import {
 	SUPPORTED_OAUTH_PROVIDERS,
 	SUPPORTED_OAUTH_PROVIDERS_DETAILS,
-} from '../lib/o-auth-provider';
+} from '@/lib/o-auth.provider';
 import { authClient } from '@/lib/auth-client';
 import { ActionButton } from '@/components/ui/action-button';
 

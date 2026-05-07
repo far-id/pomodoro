@@ -5,7 +5,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_app')({
 	beforeLoad: ({ context, location }) => {
-		if (!context.user) {
+		if (!context.user || !context.session) {
 			throw redirect({
 				to: '/auth/login',
 				search: {
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_app')({
 				},
 			});
 		}
-		return { user: context.user };
+		return { user: context.user, session: context.session };
 	},
 	component: RouteComponent,
 });

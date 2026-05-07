@@ -5,7 +5,7 @@ import { LoadingSwap } from '@/components/ui/loading-swap';
 import { toast } from 'sonner';
 import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth-client';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import z from 'zod';
 
 const formSchema = z
@@ -18,8 +18,15 @@ const formSchema = z
 		path: ['passwordConfirmation'],
 	});
 
-export const ResetPasswordForm = ({ token }: { token: string }) => {
+export const SetNewPasswordForm = ({
+	token,
+	navigateTo,
+}: {
+	token: string;
+	navigateTo: string;
+}) => {
 	const navigate = useNavigate();
+	const router = useRouter();
 	const form = useForm({
 		defaultValues: {
 			password: '',
@@ -36,10 +43,11 @@ export const ResetPasswordForm = ({ token }: { token: string }) => {
 				},
 				{
 					onSuccess: () => {
-						toast.success('Password reset successfully!');
+						toast.success('New password set successfully');
 						navigate({
-							to: '/auth/login',
+							to: navigateTo,
 						});
+						router.invalidate();
 					},
 					onError: (ctx) => {
 						toast.error(ctx.error.message);
@@ -106,7 +114,7 @@ export const ResetPasswordForm = ({ token }: { token: string }) => {
 					<form.Subscribe selector={(formState) => [formState.canSubmit, formState.isSubmitting]}>
 						{([canSubmit, isSubmitting]) => (
 							<Button type='submit' disabled={!canSubmit}>
-								<LoadingSwap isLoading={isSubmitting}>Reset Passowrd</LoadingSwap>
+								<LoadingSwap isLoading={isSubmitting}>Set New Passowrd</LoadingSwap>
 							</Button>
 						)}
 					</form.Subscribe>

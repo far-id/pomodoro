@@ -17,6 +17,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AppProjectsRouteImport } from './routes/_app/projects'
+import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -59,6 +60,11 @@ const AppProjectsRoute = AppProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
+  '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
+  '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteRouteWithChildren
   '/_app': typeof AppRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/profile': typeof AppProfileRoute
   '/_app/projects': typeof AppProjectsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/profile'
     | '/projects'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/profile'
     | '/projects'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_app'
     | '/_app/dashboard'
+    | '/_app/profile'
     | '/_app/projects'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -244,11 +263,13 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppProjectsRoute: typeof AppProjectsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
+  AppProfileRoute: AppProfileRoute,
   AppProjectsRoute: AppProjectsRoute,
 }
 

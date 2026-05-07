@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResetPasswordForm } from '../components/ResetPasswordForm';
+import { SetNewPasswordForm } from '@/components/SetNewPasswordForm';
 
 export default function ResetPassword({ token }: { token: string }) {
 	return (
@@ -12,7 +12,7 @@ export default function ResetPassword({ token }: { token: string }) {
 				<p className='text-muted-foreground text-center'>Enter your new password</p>
 			</CardHeader>
 			<CardContent>
-				<ResetPasswordForm token={token} />
+				<SetNewPasswordForm token={token} navigateTo='/auth/login' />
 			</CardContent>
 		</Card>
 	);

@@ -25,17 +25,17 @@ export const taskStatusEnum = pgEnum("task_status", [
 // ─────────────────────────────────────────────
 // TABLES
 
-export const user = pgTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
-  image: text("image"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
+export const user = pgTable('user', {
+	id: text('id').primaryKey(),
+	name: text('name').notNull(),
+	email: text('email').notNull().unique(),
+	emailVerified: boolean('email_verified').default(false).notNull(),
+	image: text('image'),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at')
+		.defaultNow()
+		.$onUpdate(() => /* @__PURE__ */ new Date())
+		.notNull(),
 });
 
 export const session = pgTable(

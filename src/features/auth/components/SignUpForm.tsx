@@ -102,6 +102,7 @@ export const SignUpForm = () => {
 									onChange={(e) => field.handleChange(e.target.value)}
 									aria-invalid={isInvalid}
 									placeholder='example@pomondoro.com'
+									type='email'
 									autoComplete='off'
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}

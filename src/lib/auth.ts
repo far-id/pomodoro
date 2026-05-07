@@ -11,10 +11,10 @@ export const auth = betterAuth({
 	}),
 	emailAndPassword: {
 		enabled: true,
-		sendResetPassword: async ({ user, token }) => {
-			const url = `${process.env.BETTER_AUTH_URL}/auth/reset-password?token=${token}`;
+		sendResetPassword: async ({ user, url }) => {
 			resetPasswordRequest({ user, url });
 		},
+		resetPasswordTokenExpiresIn: 60 * 60, // 1 hour
 	},
 	emailVerification: {
 		autoSignInAfterVerification: true,
@@ -41,6 +41,16 @@ export const auth = betterAuth({
 		cookieCache: {
 			enabled: true,
 			maxAge: 30 * 60, // 30 minutes
+		},
+	},
+	account: {
+		encryptOAuthTokens: true, // Encrypt OAuth tokens before storing them in the database
+		storeAccountCookie: true, // Store account data after OAuth flow in a cookie (useful for database-less flows)
+		accountLinking: {
+			enabled: true,
+			trustedProviders: ['google', 'github', 'email-password'],
+			allowDifferentEmails: false,
+			allowUnlinkingAll: false,
 		},
 	},
 	plugins: [tanstackStartCookies()],

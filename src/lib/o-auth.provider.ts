@@ -1,5 +1,5 @@
 import type { ComponentProps, ElementType } from 'react';
-import { GithubIcon, GoogleIcon } from '../components/OAuthIcon';
+import { GithubIcon, GoogleIcon } from '@/components/OAuthIcon';
 
 export const SUPPORTED_OAUTH_PROVIDERS = ['github', 'google'] as const;
 export type SupportedOAuthProvider = (typeof SUPPORTED_OAUTH_PROVIDERS)[number];

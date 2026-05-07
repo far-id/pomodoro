@@ -7,21 +7,27 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CircleUserRound, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useSettingDrawerToggleStore } from '../hooks/useSettingDrawerToggleStore';
 import type { User } from 'better-auth';
 import { authClient } from '@/lib/auth-client';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
+import { ProfileAvatar } from '@/components/ProfileAvatar';
+import { useQueryClient } from '@tanstack/react-query';
 
-export const TopNavbar = ({ user }: { user: User | null }) => {
+export const TopNavbar = ({ user }: { user: User }) => {
 	const { setIsOpen } = useSettingDrawerToggleStore();
-	const navigate = useNavigate();
+	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	const handleLogout = () => {
 		authClient.signOut({
 			fetchOptions: {
-				onSuccess: () => {
-					navigate({ to: '/auth/login' });
+				onSuccess: async () => {
+					// Clear cache completely to force fresh fetch
+					queryClient.removeQueries({ queryKey: ['session'] });
+					await router.invalidate();
+					router.navigate({ to: '/auth/login' });
 				},
 			},
 		});
@@ -43,17 +49,17 @@ export const TopNavbar = ({ user }: { user: User | null }) => {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<button>
-							{user?.image ? (
-								<img className='w-8 h-8 rounded-full' src={user.image} alt={user.name} />
-							) : (
-								<CircleUserRound strokeWidth={1.2} />
-							)}
+							<ProfileAvatar image={user.image} name={user.name} />
 						</button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent className='w-40' align='start'>
 						<DropdownMenuGroup>
 							<DropdownMenuLabel>My Account</DropdownMenuLabel>
-							<DropdownMenuItem>Profile</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Link to='/profile' className='w-full'>
+									Profile
+								</Link>
+							</DropdownMenuItem>
 							<DropdownMenuItem>
 								<button onClick={() => setIsOpen(true)} className='capitalize w-full text-left'>
 									Settings

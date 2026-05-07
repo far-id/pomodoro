@@ -36,6 +36,10 @@ body {
 	--accent: oklch(0.97 0 0);
 	--accent-foreground: oklch(0.205 0 0);
 	--destructive: oklch(0.577 0.245 27.325);
+	--success: oklch(0.38 0.13 145);
+	--success-foreground: oklch(0.98 0.02 145);
+	--success-muted: oklch(0.93 0.045 145);
+	--success-border: oklch(0.76 0.10 145);
 	--border: oklch(0.922 0 0);
 	--input: oklch(0.922 0 0);
 	--ring: oklch(0.708 0 0);
@@ -71,6 +75,10 @@ body {
 	--accent: oklch(0.269 0 0);
 	--accent-foreground: oklch(0.985 0 0);
 	--destructive: oklch(0.704 0.191 22.216);
+	--success: oklch(0.74 0.14 145);
+	--success-foreground: oklch(0.12 0.04 145);
+	--success-muted: oklch(0.22 0.055 145);
+	--success-border: oklch(0.36 0.09 145);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
 	--ring: oklch(0.556 0 0);
@@ -117,6 +125,10 @@ body {
 	--color-secondary: var(--secondary);
 	--color-primary-foreground: var(--primary-foreground);
 	--color-primary: var(--primary);
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-success-muted: var(--success-muted);
+	--color-success-border: var(--success-border);
 	--color-popover-foreground: var(--popover-foreground);
 	--color-popover: var(--popover);
 	--color-card-foreground: var(--card-foreground);

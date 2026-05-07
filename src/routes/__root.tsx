@@ -6,7 +6,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
 import appCss from '../styles.css?url';
 
-import type { QueryClient } from '@tanstack/react-query';
+import { queryOptions, type QueryClient } from '@tanstack/react-query';
 import { getSessionFn } from '@/features/auth/serverFn/auth-fn';
 import { Toaster } from '@/components/ui/sonner';
 import NotFound from '@/features/system/pages/NotFound';
@@ -16,9 +16,15 @@ interface MyRouterContext {
 	queryClient: QueryClient;
 }
 
+const sessionQueryOptions = queryOptions({
+	queryKey: ['session'],
+	queryFn: getSessionFn,
+	staleTime: 30 * 60 * 1000, // 30 minutes
+});
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-	beforeLoad: async () => {
-		const session = await getSessionFn();
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.fetchQuery(sessionQueryOptions);
 
 		return {
 			user: session?.user ?? null,
@@ -47,7 +53,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	}),
 	shellComponent: RootDocument,
 	notFoundComponent: NotFound,
-	errorComponent: ServerError,
+	// errorComponent: ServerError,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -65,7 +71,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   dark:[&::-webkit-scrollbar-track]:bg-neutral-700'
 			>
 				{children}
-				<Toaster />
+				<Toaster swipeDirections={['top', 'left', 'right', 'bottom']} />
 				<TanStackDevtools
 					config={{
 						position: 'bottom-right',

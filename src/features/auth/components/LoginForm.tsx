@@ -1,6 +1,6 @@
 import { PasswordInput } from '@/components/ui/password-input';
 import { useForm } from '@tanstack/react-form';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import z from 'zod';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { LoadingSwap } from '@/components/ui/loading-swap';
 import { authClient } from '@/lib/auth-client';
 import { resolveRedirect } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 
 const formSchema = z.object({
 	email: z.email(),
@@ -17,6 +18,8 @@ const formSchema = z.object({
 
 export const LoginForm = () => {
 	const navigate = useNavigate();
+	const router = useRouter();
+	const queryClient = useQueryClient();
 	const form = useForm({
 		defaultValues: {
 			email: '',
@@ -32,7 +35,12 @@ export const LoginForm = () => {
 					password: value.password,
 				},
 				{
-					onSuccess: () => {
+					onSuccess: async () => {
+						// Clear cache completely to force fresh fetch
+						queryClient.removeQueries({ queryKey: ['session'] });
+						// Wait for router to refetch before navigating
+						await router.invalidate();
+
 						toast.success('Welcome back to Pomondoro!', {
 							position: 'top-right',
 						});
@@ -70,6 +78,7 @@ export const LoginForm = () => {
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
 									aria-invalid={isInvalid}
+									type='email'
 									placeholder='example@pomondoro.com'
 									autoComplete='off'
 								/>
