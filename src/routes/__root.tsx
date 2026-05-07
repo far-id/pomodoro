@@ -1,4 +1,10 @@
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import {
+	ErrorComponent,
+	HeadContent,
+	Scripts,
+	createRootRouteWithContext,
+	type ErrorComponentProps,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 
@@ -53,7 +59,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	}),
 	shellComponent: RootDocument,
 	notFoundComponent: NotFound,
-	// errorComponent: ServerError,
+	errorComponent: ErrorBoundary,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -88,4 +94,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</body>
 		</html>
 	);
+}
+
+function ErrorBoundary(props: ErrorComponentProps) {
+	if (import.meta.env.DEV) return <ErrorComponent {...props} />;
+	return <ServerError />;
 }
