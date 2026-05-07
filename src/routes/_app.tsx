@@ -1,6 +1,7 @@
 import { Settings } from '@/features/app/components/Settings';
 import { SideNavbar } from '@/features/app/components/SideNavbar';
 import { TopNavbar } from '@/features/app/components/TopNavbar';
+import { useSession } from '@/hooks/useSession';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_app')({
@@ -19,7 +20,7 @@ export const Route = createFileRoute('/_app')({
 });
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
+	const { user } = useSession();
 	return (
 		<div id='app_layout' className='flex'>
 			<SideNavbar />

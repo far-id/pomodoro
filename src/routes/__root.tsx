@@ -12,21 +12,15 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
 import appCss from '../styles.css?url';
 
-import { queryOptions, type QueryClient } from '@tanstack/react-query';
-import { getSessionFn } from '@/features/auth/serverFn/auth-fn';
+import { type QueryClient } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
 import NotFound from '@/features/system/pages/NotFound';
 import ServerError from '@/features/system/pages/ServerError';
+import { sessionQueryOptions } from '@/queries/session.queries';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
 }
-
-const sessionQueryOptions = queryOptions({
-	queryKey: ['session'],
-	queryFn: getSessionFn,
-	staleTime: 30 * 60 * 1000, // 30 minutes
-});
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	beforeLoad: async ({ context }) => {
