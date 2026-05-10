@@ -18,7 +18,7 @@ export const OAuthLogin = () => {
 					if (res.error) {
 						return { error: true, message: res.error.message };
 					} else {
-						return { error: false, message: 'Successfull' };
+						return { error: false, message: 'Welcome back to Pomondoro!' };
 					}
 				}}
 				variant={'outline'}
