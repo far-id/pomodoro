@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from '#/db';
 import { resetPasswordRequest } from '@/email/resetPasswordRequest';
 import { verificationEmail } from '@/email/verificationEmail';
+import { userSettings } from '@/db/schema';
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -51,6 +52,19 @@ export const auth = betterAuth({
 			trustedProviders: ['google', 'github', 'email-password'],
 			allowDifferentEmails: false,
 			allowUnlinkingAll: false,
+		},
+	},
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					try {
+						await db.insert(userSettings).values({ userId: user.id }).onConflictDoNothing();
+					} catch (error) {
+						console.error(`[settings] Failed to create settings for user ${user.id}:`, error);
+					}
+				},
+			},
 		},
 	},
 	plugins: [tanstackStartCookies()],

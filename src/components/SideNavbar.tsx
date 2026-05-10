@@ -8,7 +8,7 @@ import {
 	SlidersHorizontal,
 	TimerIcon,
 } from 'lucide-react';
-import { useSettingDrawerToggleStore } from '../hooks/useSettingDrawerToggleStore';
+import { useSettingDrawerToggleStore } from '../features/pomodoro/stores/useSettingDrawerToggleStore';
 
 export const SideNavbar = () => {
 	const { setIsOpen } = useSettingDrawerToggleStore();

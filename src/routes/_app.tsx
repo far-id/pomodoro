@@ -1,6 +1,6 @@
-import { Settings } from '@/features/app/components/Settings';
-import { SideNavbar } from '@/features/app/components/SideNavbar';
-import { TopNavbar } from '@/features/app/components/TopNavbar';
+import { Settings } from '@/features/pomodoro/components/Settings';
+import { SideNavbar } from '@/components/SideNavbar';
+import { TopNavbar } from '@/components/TopNavbar';
 import { useSession } from '@/hooks/useSession';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
