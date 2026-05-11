@@ -220,7 +220,7 @@ export const SettingsForm = ({ id }: { id: string }) => {
 				</div>
 				<FieldSeparator />
 				<div className='flex flex-col gap-3'>
-					<p className='text-muted-foreground'>Notifications</p>
+					<p className='text-muted-foreground'>Long Break</p>
 					<div className='flex flex-col w-full gap-3'>
 						<form.Field name='longBreakInterval'>
 							{(field) => {

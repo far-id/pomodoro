@@ -1,43 +1,186 @@
 import { create } from 'zustand';
-import { minutesToSeconds } from '../lib/duration';
+import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+import type { PomodoroSettings } from '../lib/settings';
 import { DEFAULT_SETTINGS } from '../lib/settings';
 
-type TimerMode = 'pomodoro' | 'short_break' | 'long_break';
-type TimerStatus = 'idle' | 'running' | 'paused';
+export type TimerMode = 'focus' | 'shortBreak' | 'longBreak';
 
-type TimerActions = {
+interface TimerState {
+	mode: TimerMode;
+	seconds: number;
+	totalSeconds: number;
+	running: boolean;
+	startedAt: number | null;
+	secondsAtStart: number;
+	completedPomodoros: number;
+	breakCount: number;
+	settings: PomodoroSettings;
+
+	syncSettings: (s: PomodoroSettings) => void;
 	start: () => void;
 	pause: () => void;
-	reset: (durationSeconds: number) => void;
+	reset: () => void;
+	skip: () => void;
 	tick: () => void;
-	switchMode: (mode: TimerMode, durationSeconds: number) => void;
-};
+	switchMode: (mode: TimerMode) => void;
+	rehydrateElapsed: () => void;
+}
 
-type TimerState = {
-	mode: TimerMode;
-	status: TimerStatus;
-	secondsLeft: number;
-	completedPomodoros: number;
-	actions: TimerActions;
-};
+function durationFor(mode: TimerMode, s: PomodoroSettings): number {
+	switch (mode) {
+		case 'focus':
+			return s.pomodoroDuration * 60;
+		case 'shortBreak':
+			return s.shortBreakDuration * 60;
+		case 'longBreak':
+			return s.longBreakDuration * 60;
+	}
+}
 
-const useTimerStore = create<TimerState>((set) => ({
-	mode: 'pomodoro',
-	status: 'idle',
-	secondsLeft: minutesToSeconds(DEFAULT_SETTINGS.pomodoroDuration),
-	completedPomodoros: 0,
-	actions: {
-		start: () => set({ status: 'running' }),
-		pause: () => set({ status: 'paused' }),
-		reset: (durationSeconds) => set({ status: 'idle', secondsLeft: durationSeconds }),
-		tick: () => set((s) => ({ secondsLeft: Math.max(0, s.secondsLeft - 1) })),
-		switchMode: (mode, durationSeconds) =>
-			set({ mode, status: 'idle', secondsLeft: durationSeconds }),
-	},
-}));
+function nextMode(current: TimerMode, breakCount: number, settings: PomodoroSettings): TimerMode {
+	if (current === 'focus') {
+		return (breakCount + 1) % settings.longBreakInterval === 0 ? 'longBreak' : 'shortBreak';
+	}
+	return 'focus';
+}
 
-export const useTimerMode = () => useTimerStore((state) => state.mode);
-export const useTimerStatus = () => useTimerStore((state) => state.status);
-export const useSecondsLeft = () => useTimerStore((state) => state.secondsLeft);
-export const useCompletedPomodoros = () => useTimerStore((state) => state.completedPomodoros);
-export const useTimerActions = () => useTimerStore((state) => state.actions);
+function applyTransition(get: () => TimerState, set: (partial: Partial<TimerState>) => void) {
+	const { mode, breakCount, completedPomodoros, settings } = get();
+	const next = nextMode(mode, breakCount, settings);
+	const total = durationFor(next, settings);
+	const newBreakCount = mode === 'focus' ? breakCount + 1 : breakCount;
+	const newCompleted = mode === 'focus' ? completedPomodoros + 1 : completedPomodoros;
+	const autoStart = next === 'focus' ? settings.autoStartPomodoros : settings.autoStartBreaks;
+
+	set({
+		seconds: autoStart ? 0 : total,
+		running: false,
+		startedAt: null,
+		mode: next,
+		totalSeconds: total,
+		breakCount: newBreakCount,
+		completedPomodoros: newCompleted,
+	});
+
+	if (autoStart) {
+		setTimeout(
+			() => set({ seconds: total, running: true, startedAt: Date.now(), secondsAtStart: total }),
+			1200,
+		);
+	}
+}
+
+export const useTimerStore = create<TimerState>()(
+	subscribeWithSelector(
+		persist(
+			(set, get) => ({
+				mode: 'focus',
+				seconds: DEFAULT_SETTINGS.pomodoroDuration * 60,
+				totalSeconds: DEFAULT_SETTINGS.pomodoroDuration * 60,
+				running: false,
+				startedAt: null,
+				secondsAtStart: DEFAULT_SETTINGS.pomodoroDuration * 60,
+				completedPomodoros: 0,
+				breakCount: 0,
+				settings: DEFAULT_SETTINGS,
+
+				// When rehydrating, adjust seconds based on elapsed time while unmounted
+				rehydrateElapsed: () => {
+					const { running, startedAt, secondsAtStart } = get();
+					if (!running || startedAt === null) return;
+
+					const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+					const corrected = secondsAtStart - elapsed;
+
+					if (corrected <= 0) {
+						get().skip();
+					} else {
+						set({ seconds: corrected });
+					}
+				},
+
+				syncSettings: (s) => {
+					const { running, mode } = get();
+					if (running) {
+						set({ settings: s });
+					} else {
+						const total = durationFor(mode, s);
+						set({ settings: s, totalSeconds: total, seconds: total, secondsAtStart: total });
+					}
+				},
+
+				start: () => {
+					const { seconds } = get();
+					set({ running: true, startedAt: Date.now(), secondsAtStart: seconds });
+				},
+
+				pause: () => set({ running: false, startedAt: null }),
+
+				reset: () => {
+					const { mode, settings } = get();
+					const total = durationFor(mode, settings);
+					set({
+						running: false,
+						seconds: total,
+						totalSeconds: total,
+						startedAt: null,
+						secondsAtStart: total,
+					});
+				},
+
+				skip: () => {
+					applyTransition(get, set);
+				},
+
+				tick: () => {
+					const { seconds } = get();
+
+					if (seconds > 1) {
+						set({ seconds: seconds - 1 });
+						return;
+					}
+
+					applyTransition(get, set);
+				},
+
+				switchMode: (mode) => {
+					const { settings } = get();
+					const total = durationFor(mode, settings);
+					set({
+						mode,
+						seconds: total,
+						totalSeconds: total,
+						running: false,
+						startedAt: null,
+						secondsAtStart: total,
+					});
+				},
+			}),
+			{
+				name: 'pomodoro:timer',
+				storage: createJSONStorage(() => {
+					// Fallback to in-memory storage for environments without localStorage (e.g. React Native, SSR)
+					if (globalThis.window === undefined) {
+						const map = new Map<string, string>();
+						return {
+							getItem: (k) => map.get(k) ?? null,
+							setItem: (k, v) => map.set(k, v),
+							removeItem: (k) => map.delete(k),
+						};
+					}
+					return localStorage;
+				}),
+				partialize: (state) => ({
+					mode: state.mode,
+					seconds: state.seconds,
+					totalSeconds: state.totalSeconds,
+					running: state.running,
+					startedAt: state.startedAt,
+					secondsAtStart: state.secondsAtStart,
+					completedPomodoros: state.completedPomodoros,
+					breakCount: state.breakCount,
+				}),
+			},
+		),
+	),
+);

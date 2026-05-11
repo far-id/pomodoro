@@ -78,7 +78,9 @@ export const SideNavbar = () => {
 				</div>
 
 				<div className='flex flex-col'>
-					<Button className=''>Start Focus</Button>
+					<Button asChild>
+						<Link to={'/timer'}>Start Focus</Link>
+					</Button>
 					<Button variant={'secondary'}>Add project</Button>
 				</div>
 			</div>
@@ -104,7 +106,9 @@ export const SideNavbar = () => {
 						</Link>
 						<div className='flex items-center justify-center'>
 							<button className='bg-primary text-white p-3 rounded-full shadow-lg'>
-								<TimerIcon className='w-6 h-6' />
+								<Link to={'/timer'}>
+									<TimerIcon className='w-6 h-6' />
+								</Link>
 							</button>
 						</div>
 						<Link to={'/tasks'} className='group'>
