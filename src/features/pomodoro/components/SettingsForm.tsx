@@ -4,18 +4,7 @@ import { useForm } from '@tanstack/react-form';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { useSettings } from '../hooks/useSettings';
-import z from 'zod';
-
-const formSchema = z.object({
-	pomodoroDuration: z.number(),
-	shortBreakDuration: z.number(),
-	longBreakDuration: z.number(),
-	autoStartBreaks: z.boolean(),
-	autoStartPomodoros: z.boolean(),
-	longBreakInterval: z.number(),
-	soundNotification: z.boolean(),
-	browserNotification: z.boolean(),
-});
+import { pomodoroSettingsSchema } from '../lib/settings';
 
 export const SettingsForm = ({ id }: { id: string }) => {
 	const { settings, updateSettings } = useSettings();
@@ -23,7 +12,7 @@ export const SettingsForm = ({ id }: { id: string }) => {
 	const form = useForm({
 		defaultValues: settings,
 		validators: {
-			onSubmit: formSchema,
+			onSubmit: pomodoroSettingsSchema,
 		},
 		onSubmit: async ({ value }) => {
 			const result = await updateSettings(value);

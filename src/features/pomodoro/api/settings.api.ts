@@ -2,7 +2,7 @@ import { db } from '@/db';
 import { userSettings } from '@/db/schema';
 import { protectedMiddleware } from '@/middlewares/auth';
 import { createServerFn } from '@tanstack/react-start';
-import type { PomodoroSettings } from '../lib/settings';
+import { pomodoroSettingsSchema, type PomodoroSettings } from '../lib/settings';
 import { eq } from 'drizzle-orm';
 
 export const getUserSettingsFn = createServerFn({ method: 'GET' })
@@ -27,7 +27,7 @@ export const getUserSettingsFn = createServerFn({ method: 'GET' })
 
 export const updateSettingsFn = createServerFn({ method: 'POST' })
 	.middleware([protectedMiddleware])
-	.inputValidator((data: Partial<PomodoroSettings>) => data)
+	.inputValidator((data: Partial<PomodoroSettings>) => pomodoroSettingsSchema.partial().parse(data))
 	.handler(async ({ data, context }) => {
 		const userId = context.user!.id;
 		const [updated] = await db

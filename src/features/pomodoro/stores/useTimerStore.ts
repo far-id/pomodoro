@@ -15,7 +15,8 @@ interface TimerState {
 	completedPomodoros: number;
 	breakCount: number;
 	settings: PomodoroSettings;
-
+	pendingAutoStart: ReturnType<typeof setTimeout> | null;
+	clearPendingAutoStart: () => void;
 	syncSettings: (s: PomodoroSettings) => void;
 	start: () => void;
 	pause: () => void;
@@ -53,20 +54,21 @@ function applyTransition(get: () => TimerState, set: (partial: Partial<TimerStat
 	const autoStart = next === 'focus' ? settings.autoStartPomodoros : settings.autoStartBreaks;
 
 	set({
-		seconds: autoStart ? 0 : total,
+		seconds: total,
 		running: false,
 		startedAt: null,
 		mode: next,
 		totalSeconds: total,
 		breakCount: newBreakCount,
 		completedPomodoros: newCompleted,
+		pendingAutoStart: null,
 	});
 
 	if (autoStart) {
-		setTimeout(
-			() => set({ seconds: total, running: true, startedAt: Date.now(), secondsAtStart: total }),
-			1200,
-		);
+		const timeoutId = setTimeout(() => {
+			set({ running: true, startedAt: Date.now(), secondsAtStart: total, pendingAutoStart: null });
+		}, 1200);
+		set({ pendingAutoStart: timeoutId });
 	}
 }
 
@@ -83,6 +85,15 @@ export const useTimerStore = create<TimerState>()(
 				completedPomodoros: 0,
 				breakCount: 0,
 				settings: DEFAULT_SETTINGS,
+				pendingAutoStart: null,
+
+				clearPendingAutoStart: () => {
+					const { pendingAutoStart } = get();
+					if (pendingAutoStart !== null) {
+						clearTimeout(pendingAutoStart);
+						set({ pendingAutoStart: null });
+					}
+				},
 
 				// When rehydrating, adjust seconds based on elapsed time while unmounted
 				rehydrateElapsed: () => {
@@ -117,6 +128,7 @@ export const useTimerStore = create<TimerState>()(
 				pause: () => set({ running: false, startedAt: null }),
 
 				reset: () => {
+					get().clearPendingAutoStart();
 					const { mode, settings } = get();
 					const total = durationFor(mode, settings);
 					set({
@@ -129,6 +141,7 @@ export const useTimerStore = create<TimerState>()(
 				},
 
 				skip: () => {
+					get().clearPendingAutoStart();
 					applyTransition(get, set);
 				},
 
@@ -144,6 +157,7 @@ export const useTimerStore = create<TimerState>()(
 				},
 
 				switchMode: (mode) => {
+					get().clearPendingAutoStart();
 					const { settings } = get();
 					const total = durationFor(mode, settings);
 					set({
